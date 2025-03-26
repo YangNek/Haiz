@@ -1,0 +1,829 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Trang Web Tình Yêu</title>
+  <style>
+    * {
+      margin: 0; 
+      padding: 0; 
+      box-sizing: border-box;
+    }
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #fff; /* Nền trắng */
+      overflow-x: hidden;
+    }
+    button {
+      cursor: pointer;
+    }
+
+    /* ========== MÀN HÌNH CHÀO ========== */
+    .welcome-screen {
+      position: relative;
+      width: 100%;
+      height: 100vh;
+      background: #ffe6f2; 
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      transition: opacity 0.8s, visibility 0.8s;
+    }
+    .welcome-screen.hide {
+      opacity: 0;
+      visibility: hidden;
+    }
+    .welcome-box {
+      background: #fff;
+      padding: 20px 30px;
+      border-radius: 15px;
+      text-align: center;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    .welcome-box h2 {
+      margin-bottom: 10px;
+      color: #ff4081;
+    }
+    .avatar {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      background: linear-gradient(45deg, #ff4081, #ffc0cb);
+      margin: 0 auto 15px auto;
+      border: 3px solid #ff4081;
+    }
+    .welcome-box input {
+      width: 200px;
+      padding: 8px;
+      margin-bottom: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      outline: none;
+      text-align: center;
+    }
+    .welcome-box button {
+      background-color: #ff4081;
+      color: #fff;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+      font-weight: bold;
+    }
+    .welcome-box button:hover {
+      background-color: #e91e63;
+    }
+
+    /* Đường và xe van (bằng CSS) */
+    .road {
+      position: relative;
+      width: 100%;
+      height: 120px;
+      background: #fff;
+      margin-top: 20px;
+      overflow: hidden;
+    }
+    .line {
+      position: absolute;
+      top: 50%;
+      left: 0;
+      width: 100%;
+      height: 2px;
+      background: #666;
+    }
+    .van {
+      position: absolute;
+      bottom: 0;
+      left: -150px;
+      width: 120px;
+      height: 60px;
+      background: pink;
+      border-radius: 10px 10px 20px 20px;
+      animation: drive 6s linear infinite;
+    }
+    .van::before {
+      /* mui xe */
+      content: "";
+      position: absolute;
+      width: 60px;
+      height: 30px;
+      background: pink;
+      top: -30px;
+      left: 10px;
+      border-radius: 10px 10px 0 0;
+    }
+    .wheel {
+      position: absolute;
+      bottom: -10px;
+      width: 20px;
+      height: 20px;
+      background: #333;
+      border-radius: 50%;
+    }
+    .wheel:nth-child(2) {
+      left: 15px;
+    }
+    .wheel:nth-child(3) {
+      right: 15px;
+    }
+    @keyframes drive {
+      0% { left: -150px; }
+      100% { left: 110%; }
+    }
+
+    /* Hiệu ứng trái tim bay */
+    .heart {
+      position: absolute;
+      width: 30px;
+      height: 30px;
+      background: red;
+      top: 80%;
+      border-radius: 50% 50% 0 0;
+      transform: rotate(-45deg);
+      animation: floatUp 3s ease-in-out infinite;
+    }
+    .heart::before, .heart::after {
+      content: "";
+      position: absolute;
+      width: 30px;
+      height: 30px;
+      background: red;
+      border-radius: 50% 50% 0 0;
+    }
+    .heart::before {
+      left: -15px;
+    }
+    .heart::after {
+      top: -15px;
+      left: 0;
+    }
+    @keyframes floatUp {
+      0% { transform: translateY(0) rotate(-45deg); opacity: 1; }
+      70% { transform: translateY(-50px) rotate(-45deg); }
+      100% { transform: translateY(-80px) rotate(-45deg); opacity: 0; }
+    }
+
+    /* ========== MÀN HÌNH CÂU HỎI ========== */
+    .question-screen {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      min-height: 100vh;
+      background-color: #fff;
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      padding-top: 20px;
+    }
+    .cherry-tree {
+      position: absolute;
+      bottom: 0;
+      left: 10%;
+      width: 150px;
+      height: 200px;
+    }
+    /* Thân cây */
+    .trunk {
+      position: absolute;
+      bottom: 0;
+      left: 60px;
+      width: 30px;
+      height: 120px;
+      background: #8B4513;
+      border-radius: 10px;
+    }
+    /* Tán hoa đào */
+    .blossom {
+      position: absolute;
+      bottom: 80px;
+      left: 0;
+      width: 150px;
+      height: 100px;
+      background: pink;
+      border-radius: 80px 80px 0 0;
+    }
+    /* Trái tim rơi (thay cánh hoa) */
+    .falling-heart {
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      background: red;
+      top: -20px;
+      left: 50%;
+      border-radius: 50% 50% 0 0;
+      transform: rotate(-45deg);
+      animation: fall 5s linear infinite;
+      opacity: 0.8;
+    }
+    .falling-heart::before,
+    .falling-heart::after {
+      content: "";
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      background: red;
+      border-radius: 50% 50% 0 0;
+    }
+    .falling-heart::before {
+      left: -10px;
+    }
+    .falling-heart::after {
+      top: -10px;
+      left: 0;
+    }
+    @keyframes fall {
+      0% { transform: translateY(0) rotate(-45deg); opacity: 1; }
+      100% { transform: translateY(200px) rotate(-45deg); opacity: 0; }
+    }
+
+    .progress-container {
+      width: 80%;
+      max-width: 400px;
+      height: 20px;
+      background-color: #ddd;
+      border-radius: 10px;
+      margin: 20px auto;
+      position: relative;
+    }
+    .progress {
+      width: 0%;
+      height: 100%;
+      background-color: pink;
+      border-radius: 10px;
+      transition: width 0.5s;
+    }
+    .progress-percent {
+      position: absolute;
+      top: -25px;
+      right: 10px;
+      font-size: 14px;
+      font-weight: bold;
+    }
+    .cat {
+      /* Mèo = 1 vòng tròn + 2 tai tam giác */
+      position: absolute;
+      left: 0;
+      top: -20px;
+      width: 30px;
+      height: 30px;
+      background: #aaa;
+      border-radius: 50%;
+      transition: left 0.5s;
+    }
+    .cat::before {
+      content: "";
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      background: #aaa;
+      top: -6px;
+      left: 0;
+      transform: rotate(45deg);
+      border-radius: 2px;
+    }
+    .cat::after {
+      content: "";
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      background: #aaa;
+      top: -6px;
+      right: 0;
+      transform: rotate(-45deg);
+      border-radius: 2px;
+    }
+
+    .question-box {
+      margin: 20px;
+      padding: 15px;
+      background: #ffe6f2;
+      border-radius: 10px;
+      display: none;
+      width: 80%;
+      max-width: 300px;
+      position: relative;
+    }
+    .question-box p {
+      margin-bottom: 10px;
+    }
+    .question-box button {
+      margin: 5px;
+      padding: 8px 12px;
+      border: none;
+      border-radius: 5px;
+      background: #ff4081;
+      color: #fff;
+    }
+    .
+
+Dưới đây là phiên bản mã hoàn chỉnh được viết bằng HTML, CSS và JavaScript – không dùng ảnh ngoài (tất cả các “hình” được vẽ bằng CSS) – thỏa mãn các yêu cầu của bạn:
+
+- **Máy bay có cánh** (đã thêm các “cánh” bằng pseudo‑elements).  
+- **Hoa** được vẽ dưới dạng hình thoi kèm “cành” (thân cây xanh).  
+- **Cây đào** được thêm vào với hiệu ứng trái tim rơi (để trang trí không gian).  
+- **Nền trắng** cho toàn trang.  
+- **Hộp quà** được vẽ vuông vức.  
+- Nếu không trả lời trong **2 giây** thì hiển thị thông báo “ơ s trl lâu quá zậy, k thương a à :(”.  
+- Nếu bấm “k” thì nút biến mất và thay vào đó hiện dòng chữ “dối vãi 😒”.  
+- Ngoài ra, khi hộp quà được mở, sẽ phát âm thanh (link âm thanh mẫu) và hiển thị nội dung yêu thương.
+
+Bạn chỉ cần copy toàn bộ mã sau vào file **`index.html`** mới và mở bằng trình duyệt:
+
+---
+
+```html
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Trang Web Tình Yêu</title>
+  <style>
+    /* ====== Reset & cơ bản ====== */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: Arial, sans-serif; background: #fff; overflow-x: hidden; }
+    button { cursor: pointer; }
+
+    /* ====== MÀN HÌNH CHÀO ====== */
+    .welcome-screen {
+      width: 100%;
+      height: 100vh;
+      background: #ffe6f2;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      transition: opacity 0.8s, visibility 0.8s;
+    }
+    .welcome-screen.hide { opacity: 0; visibility: hidden; }
+    .welcome-box {
+      background: #fff;
+      padding: 20px 30px;
+      border-radius: 15px;
+      text-align: center;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    .welcome-box h2 { margin-bottom: 10px; color: #ff4081; }
+    .avatar {
+      width: 100px; height: 100px;
+      border-radius: 50%;
+      background: linear-gradient(45deg, #ff4081, #ffc0cb);
+      margin: 0 auto 15px;
+      border: 3px solid #ff4081;
+    }
+    .welcome-box input {
+      width: 200px; padding: 8px; margin-bottom: 10px;
+      border: 1px solid #ccc; border-radius: 5px;
+      text-align: center;
+    }
+    .welcome-box button {
+      background: #ff4081; color: #fff;
+      padding: 10px 20px; border: none;
+      border-radius: 5px; font-weight: bold;
+    }
+    .welcome-box button:hover { background: #e91e63; }
+
+    /* Đường & xe van (vẽ bằng CSS) */
+    .road {
+      width: 100%; height: 120px; background: #fff;
+      margin-top: 20px; position: relative; overflow: hidden;
+    }
+    .line {
+      position: absolute; top: 50%; left: 0;
+      width: 100%; height: 2px; background: #666;
+    }
+    .van {
+      position: absolute; bottom: 0; left: -150px;
+      width: 120px; height: 60px; background: pink;
+      border-radius: 10px 10px 20px 20px;
+      animation: drive 6s linear infinite;
+    }
+    .van::before {
+      content: "";
+      position: absolute; width: 60px; height: 30px;
+      background: pink; top: -30px; left: 10px;
+      border-radius: 10px 10px 0 0;
+    }
+    .wheel {
+      position: absolute; bottom: -10px;
+      width: 20px; height: 20px;
+      background: #333; border-radius: 50%;
+    }
+    .wheel:nth-child(2) { left: 15px; }
+    .wheel:nth-child(3) { right: 15px; }
+    @keyframes drive {
+      0% { left: -150px; } 100% { left: 110%; }
+    }
+
+    /* Hiệu ứng trái tim bay (CSS) */
+    .heart {
+      position: absolute;
+      width: 30px; height: 30px;
+      background: red; top: 80%;
+      border-radius: 50% 50% 0 0;
+      transform: rotate(-45deg);
+      animation: floatUp 3s ease-in-out infinite;
+    }
+    .heart::before, .heart::after {
+      content: "";
+      position: absolute;
+      width: 30px; height: 30px;
+      background: red;
+      border-radius: 50% 50% 0 0;
+    }
+    .heart::before { left: -15px; }
+    .heart::after { top: -15px; left: 0; }
+    @keyframes floatUp {
+      0% { transform: translateY(0) rotate(-45deg); opacity: 1; }
+      70% { transform: translateY(-50px) rotate(-45deg); }
+      100% { transform: translateY(-80px) rotate(-45deg); opacity: 0; }
+    }
+
+    /* ====== MÀN HÌNH CÂU HỎI ====== */
+    .question-screen {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; min-height: 100vh;
+      background: #fff;
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      padding-top: 20px;
+      overflow-y: auto;
+    }
+    /* Thanh tiến độ nhỏ hiển thị % + mèo */
+    .progress-container {
+      width: 80%; max-width: 400px;
+      height: 20px; background: #ddd;
+      border-radius: 10px; margin: 20px auto;
+      position: relative;
+    }
+    .progress {
+      width: 0%; height: 100%;
+      background: pink; border-radius: 10px;
+      transition: width 0.5s;
+    }
+    .progress-percent {
+      position: absolute;
+      top: -25px; right: 10px;
+      font-size: 14px; font-weight: bold;
+    }
+    .cat {
+      position: absolute;
+      left: 0; top: -20px;
+      width: 30px; height: 30px;
+      background: #aaa; border-radius: 50%;
+      transition: left 0.5s;
+    }
+    .cat::before {
+      content: "";
+      position: absolute; width: 10px; height: 10px;
+      background: #aaa; top: -6px; left: 0;
+      transform: rotate(45deg); border-radius: 2px;
+    }
+    .cat::after {
+      content: "";
+      position: absolute; width: 10px; height: 10px;
+      background: #aaa; top: -6px; right: 0;
+      transform: rotate(-45deg); border-radius: 2px;
+    }
+
+    .question-box {
+      background: #ffe6f2;
+      width: 80%; max-width: 300px;
+      margin: 20px auto; padding: 15px;
+      border-radius: 10px;
+      display: none;
+      position: relative;
+    }
+    .question-box p { margin-bottom: 10px; }
+    .question-box button {
+      margin: 5px; padding: 8px 12px;
+      border: none; border-radius: 5px;
+      background: #ff4081; color: #fff;
+    }
+    .question-box button:hover { background: #e91e63; }
+    /* Thông báo khi không trả lời trong 2s */
+    .timeout-message {
+      color: #ff4081;
+      font-style: italic;
+      margin-top: 10px;
+      display: none;
+    }
+    /* Khi bấm "Không" */
+    .decline-message {
+      color: #555;
+      font-style: italic;
+      margin-top: 10px;
+      display: none;
+    }
+
+    /* Hoa: Hình thoi với cành */
+    .flower {
+      width: 100px; height: 140px;
+      margin: 10px auto;
+      position: relative;
+    }
+    .diamond {
+      position: absolute;
+      top: 0; left: 50%;
+      width: 40px; height: 40px;
+      background: red;
+      transform: translateX(-50%) rotate(45deg);
+      border: 2px solid #d60000;
+    }
+    .stem {
+      position: absolute;
+      top: 40px; left: 50%;
+      width: 4px; height: 50px;
+      background: green;
+      transform: translateX(-50%);
+    }
+
+    /* Cây đào (vẽ bằng CSS) */
+    .cherry-tree {
+      position: absolute;
+      bottom: 0; right: 10%;
+      width: 150px; height: 250px;
+    }
+    .trunk {
+      position: absolute;
+      bottom: 0; left: 60px;
+      width: 30px; height: 120px;
+      background: #8B4513; border-radius: 10px;
+    }
+    .blossom {
+      position: absolute;
+      bottom: 100px; left: 0;
+      width: 150px; height: 100px;
+      background: pink; border-radius: 80px 80px 0 0;
+    }
+    /* Trái tim rơi từ cây đào */
+    .falling-heart {
+      position: absolute;
+      width: 20px; height: 20px;
+      background: red; top: -20px; left: 50%;
+      border-radius: 50% 50% 0 0;
+      transform: rotate(-45deg);
+      animation: fall 5s linear infinite;
+      opacity: 0.8;
+    }
+    .falling-heart::before,
+    .falling-heart::after {
+      content: "";
+      position: absolute;
+      width: 20px; height: 20px;
+      background: red;
+      border-radius: 50% 50% 0 0;
+    }
+    .falling-heart::before { left: -10px; }
+    .falling-heart::after { top: -10px; left: 0; }
+    @keyframes fall {
+      0% { transform: translateY(0) rotate(-45deg); opacity: 1; }
+      100% { transform: translateY(200px) rotate(-45deg); opacity: 0; }
+    }
+
+    /* Máy bay với cánh (vẽ bằng CSS) */
+    .plane {
+      position: absolute;
+      top: 20px;
+      right: -150px;
+      width: 100px; height: 40px;
+      background: #bbb;
+      border-radius: 10px;
+      display: none;
+      transition: right 2s ease-in-out;
+    }
+    .plane::before {
+      content: "";
+      position: absolute;
+      width: 30px; height: 10px;
+      background: #bbb;
+      top: 15px; left: -20px;
+      border-radius: 5px;
+    }
+    .plane::after {
+      content: "";
+      position: absolute;
+      width: 20px; height: 40px;
+      background: #bbb;
+      top: 0; right: -20px;
+      border-radius: 0 5px 5px 0;
+    }
+
+    /* Hộp quà (vuông vức) */
+    .box {
+      position: absolute;
+      top: 150px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 50px; height: 50px;
+      background: brown;
+      border: 2px solid #8B0000;
+      box-shadow: 2px 2px 5px rgba(0,0,0,0.3);
+      display: none;
+      cursor: pointer;
+      animation: glow 1s infinite alternate;
+    }
+    @keyframes glow {
+      from { box-shadow: 0 0 5px yellow; }
+      to { box-shadow: 0 0 15px yellow; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Màn hình chào -->
+  <div class="welcome-screen" id="welcomeScreen">
+    <div class="welcome-box">
+      <div class="avatar"></div>
+      <h2>Welcome</h2>
+      <input type="text" id="nameInput" placeholder="Nhập tên của bạn"/>
+      <br/>
+      <button onclick="startQuestions()">Bắt đầu</button>
+    </div>
+    <div class="road">
+      <div class="line"></div>
+      <div class="van">
+        <div class="wheel"></div>
+        <div class="wheel"></div>
+      </div>
+      <!-- Trái tim bay ngẫu nhiên -->
+      <div class="heart" style="left: 20%;"></div>
+      <div class="heart" style="left: 40%;"></div>
+      <div class="heart" style="left: 60%;"></div>
+      <div class="heart" style="left: 80%;"></div>
+    </div>
+  </div>
+
+  <!-- Màn hình câu hỏi -->
+  <div class="question-screen" id="questionScreen">
+    <!-- Thanh tiến độ -->
+    <div class="progress-container">
+      <div class="progress" id="progressBar"></div>
+      <div class="progress-percent" id="progressPercent">0%</div>
+      <div class="cat" id="catImg"></div>
+    </div>
+
+    <!-- Hoa (mỗi khi trả lời đúng, 1 cánh hoa "rụng") -->
+    <div class="flower" id="flower">
+      <div class="diamond"></div>
+      <div class="stem"></div>
+    </div>
+
+    <!-- Các hộp câu hỏi -->
+    <div id="question1" class="question-box">
+      <p id="q1Text">[Tên], anh hỏi 1 câu nhé?</p>
+      <button onclick="nextQuestion(2)">Ocii</button>
+    </div>
+
+    <div id="question2" class="question-box">
+      <p>Em có yêu anh không?</p>
+      <button onclick="answerHandler('Có', 25, 3)">Có</button>
+      <button onclick="answerHandler('Không', 0)">Không</button>
+      <div class="timeout-message" id="timeoutMsg2"></div>
+      <div class="decline-message" id="declineMsg2"></div>
+    </div>
+
+    <div id="question3" class="question-box">
+      <p>Em có muốn cưới anh không?</p>
+      <button onclick="answerHandler('Có', 25, 4)">Có</button>
+      <button onclick="answerHandler('Không', 0)">Không</button>
+      <div class="timeout-message" id="timeoutMsg3"></div>
+      <div class="decline-message" id="declineMsg3"></div>
+    </div>
+
+    <div id="question4" class="question-box">
+      <p>Em có nhớ anh không?</p>
+      <button onclick="answerHandler('Có', 25, 5)">Có</button>
+      <button onclick="answerHandler('Không', 0)">Không</button>
+      <div class="timeout-message" id="timeoutMsg4"></div>
+      <div class="decline-message" id="declineMsg4"></div>
+    </div>
+
+    <div id="question5" class="question-box">
+      <p>Em có chắc muốn anh làm chồng em không?</p>
+      <button onclick="answerHandler('Chắc', 25, 6)">Chắc</button>
+      <button onclick="answerHandler('Không', 0)">Không</button>
+      <div class="timeout-message" id="timeoutMsg5"></div>
+      <div class="decline-message" id="declineMsg5"></div>
+    </div>
+
+    <!-- Máy bay & Hộp quà -->
+    <div class="plane" id="plane"></div>
+    <div class="box" id="giftBox" onclick="openBox()">Quà</div>
+    
+    <!-- Cây đào với trái tim rơi -->
+    <div class="cherry-tree">
+      <div class="trunk"></div>
+      <div class="blossom"></div>
+      <div class="falling-heart" style="left: 40%; animation-delay: 0s;"></div>
+      <div class="falling-heart" style="left: 60%; animation-delay: 2s;"></div>
+    </div>
+  </div>
+
+  <script>
+    let welcomeScreen = document.getElementById("welcomeScreen");
+    let questionScreen = document.getElementById("questionScreen");
+    let nameInput = document.getElementById("nameInput");
+    let q1Text = document.getElementById("q1Text");
+
+    let progressBar = document.getElementById("progressBar");
+    let progressPercent = document.getElementById("progressPercent");
+    let catImg = document.getElementById("catImg");
+
+    let plane = document.getElementById("plane");
+    let giftBox = document.getElementById("giftBox");
+
+    let currentProgress = 0;
+    let timeoutHandle;
+
+    // Bắt đầu chuyển màn hình câu hỏi
+    function startQuestions() {
+      let nameVal = nameInput.value.trim() || "Em";
+      q1Text.textContent = nameVal + ", anh hỏi 1 câu nhé?";
+      welcomeScreen.classList.add("hide");
+      questionScreen.style.display = "flex";
+      document.getElementById("question1").style.display = "block";
+    }
+
+    function nextQuestion(id) {
+      hideTimeout(); // Hủy timeout cũ nếu có
+      document.getElementById("question" + (id - 1)).style.display = "none";
+      let nextQ = document.getElementById("question" + id);
+      if (nextQ) {
+        nextQ.style.display = "block";
+        startTimeout(id);
+      }
+    }
+
+    // Xử lý trả lời, nếu "Có" thì tăng tiến độ, nếu "Không" thì hiện thông báo "dối vãi 😒"
+    function answerHandler(answer, value, nextId) {
+      hideTimeout();
+      if (answer === "Không") {
+        // Ẩn nút và hiện thông báo "dối vãi 😒"
+        let parent = event.target.parentElement;
+        Array.from(parent.querySelectorAll("button")).forEach(btn => btn.style.display = "none");
+        let declineMsg = parent.querySelector(".decline-message");
+        if (declineMsg) { declineMsg.style.display = "block"; declineMsg.textContent = "dối vãi 😒"; }
+        // Không tăng tiến độ, chờ 2 giây rồi chuyển sang câu hỏi tiếp theo (nếu có)
+        setTimeout(() => { if(nextId) nextQuestion(nextId); }, 2000);
+      } else {
+        increaseProgress(value, nextId);
+      }
+    }
+
+    // Tăng thanh tiến độ và rụng cánh hoa (một số hiệu ứng)
+    function increaseProgress(value, nextId) {
+      currentProgress += value;
+      if (currentProgress >= 100) {
+        currentProgress = 100;
+        progressBar.style.width = "100%";
+        progressPercent.textContent = "100%";
+        catImg.style.left = "calc(100% - 30px)";
+        setTimeout(showPlane, 1500);
+      } else {
+        progressBar.style.width = currentProgress + "%";
+        progressPercent.textContent = currentProgress + "%";
+        catImg.style.left = currentProgress + "%";
+        if(nextId) nextQuestion(nextId);
+      }
+    }
+
+    // Timeout nếu không trả lời trong 2 giây
+    function startTimeout(qId) {
+      timeoutHandle = setTimeout(() => {
+        let timeoutMsg = document.getElementById("timeoutMsg" + qId);
+        if(timeoutMsg) { timeoutMsg.style.display = "block"; timeoutMsg.textContent = "ơ s trl lâu quá zậy, k thương a à :("; }
+      }, 2000);
+    }
+    function hideTimeout() { if(timeoutHandle) clearTimeout(timeoutHandle); }
+
+    // Máy bay bay và sau đó hiển thị hộp quà
+    function showPlane() {
+      plane.style.display = "block";
+      setTimeout(() => {
+        plane.style.right = "110%";
+        setTimeout(() => { giftBox.style.display = "block"; }, 2000);
+      }, 500);
+    }
+
+    // Mở hộp quà: phát âm thanh và hiển thị thông báo yêu thương
+    function openBox() {
+      let audio = new Audio("https://www.fesliyanstudios.com/play-mp3/387");
+      audio.play();
+      setTimeout(() => {
+        alert(
+          "Cuộc sống thì giống cuộc đời, còn anh thì giống bạn đời bên em.\n" +
+          "Quá khứ của em anh chưa từng được tham dự nhưng tương lai sánh bước bên em anh nhất định sẽ tham gia.\n" +
+          "Mình cùng nhau trải qua những ngày hạnh phúc, khổ đau và chỉ mong kết thúc là tháng ngày an yên bên nhau.\n" +
+          "Anh yêu em nhiều lắm!!"
+        );
+      }, 800);
+    }
+  </script>
+</body>
+</html>
